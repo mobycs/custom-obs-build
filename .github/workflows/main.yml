@@ -31,10 +31,11 @@ jobs:
       - name: 'Fetch Git Tags'
         run: |
           git fetch --prune --unshallow
-          echo ::set-env name=ACTIONS_ALLOW_UNSECURE_COMMANDS::true
           echo ::set-env name=OBS_GIT_BRANCH::$(git rev-parse --abbrev-ref HEAD)
           echo ::set-env name=OBS_GIT_HASH::$(git rev-parse --short HEAD)
           echo ::set-env name=OBS_GIT_TAG::$(git describe --tags --abbrev=0)
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       - name: 'Install prerequisites (Homebrew)'
         shell: bash
         run: |
@@ -114,6 +115,8 @@ jobs:
           dmgbuild -s ./CI/scripts/macos/package/settings.json "OBS" OBS.dmg
           mkdir ./nightly
           sudo mv ./OBS.dmg ./nightly/${FILE_NAME}
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       - name: 'Publish'
         if: success() && (github.event_name != 'pull_request' || contains( github.event.pull_request.labels.*.name, 'Seeking Testers'))
         uses: actions/upload-artifact@v2-preview
@@ -134,6 +137,8 @@ jobs:
           echo ::set-env name=OBS_GIT_BRANCH::$(git rev-parse --abbrev-ref HEAD)
           echo ::set-env name=OBS_GIT_HASH::$(git rev-parse --short HEAD)
           echo ::set-env name=OBS_GIT_TAG::$(git describe --tags --abbrev=0)
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       - name: Install prerequisites (Apt)
         shell: bash
         run: |
@@ -208,6 +213,8 @@ jobs:
           tar -cvzf "${FILE_NAME}" *.deb
           mv "${FILE_NAME}" ../nightly/
           cd -
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       - name: 'Publish'
         if: success() && (github.event_name != 'pull_request' || contains( github.event.pull_request.labels.*.name, 'Seeking Testers'))
         uses: actions/upload-artifact@v2-preview
@@ -242,6 +249,8 @@ jobs:
           echo ::set-env name=OBS_GIT_BRANCH::$(git rev-parse --abbrev-ref HEAD)
           echo ::set-env name=OBS_GIT_HASH::$(git rev-parse --short HEAD)
           echo ::set-env name=OBS_GIT_TAG::$(git describe --tags --abbrev=0)
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       - name: 'Install prerequisite: QT'
         run: |
           curl -kLO https://cdn-fastly.obsproject.com/downloads/Qt_${{ env.QT_VERSION }}.7z -f --retry 5 -C -
@@ -274,6 +283,8 @@ jobs:
           echo "::set-env name=FILE_NAME::${env:FILE_NAME}"
           robocopy .\build64\rundir\RelWithDebInfo .\build\ /E /XF .gitignore
           7z a ${env:FILE_NAME} .\build\*
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       - name: 'Publish'
         if: success() && (github.event_name != 'pull_request' || contains( github.event.pull_request.labels.*.name, 'Seeking Testers'))
         uses: actions/upload-artifact@v2-preview
@@ -309,6 +320,8 @@ jobs:
           echo ::set-env name=OBS_GIT_BRANCH::$(git rev-parse --abbrev-ref HEAD)
           echo ::set-env name=OBS_GIT_HASH::$(git rev-parse --short HEAD)
           echo ::set-env name=OBS_GIT_TAG::$(git describe --tags --abbrev=0)
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       - name: 'Install prerequisite: QT'
         run: |
           curl -kLO https://cdn-fastly.obsproject.com/downloads/Qt_${{ env.QT_VERSION }}.7z -f --retry 5 -C -
@@ -340,7 +353,9 @@ jobs:
           $env:FILE_NAME="${env:FILE_DATE}-${{ env.OBS_GIT_HASH }}-${{ env.OBS_GIT_TAG }}-win32.zip"
           echo "::set-env name=FILE_NAME::${env:FILE_NAME}"
           robocopy .\build32\rundir\RelWithDebInfo .\build\ /E /XF .gitignore
-          7z a ${env:FILE_NAME} .\build\*
+          7z a ${env:FILE_NAME} .\build\*\
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       - name: 'Publish'
         if: success() && (github.event_name != 'pull_request' || contains( github.event.pull_request.labels.*.name, 'Seeking Testers'))
         uses: actions/upload-artifact@v2-preview
