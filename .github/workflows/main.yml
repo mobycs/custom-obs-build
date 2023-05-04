@@ -3,12 +3,12 @@ name: 'CI Multiplatform Build'
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     paths-ignore:
       - '**.md'
     branches:
-      - master
+      - main
 
 env:
   CEF_BUILD_VERSION: '3770'
